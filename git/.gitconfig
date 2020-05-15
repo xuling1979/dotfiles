@@ -1,0 +1,8 @@
+[user]
+	email = iquakex@gmail.com
+	name = quakex
+[core]
+	pager = diff-so-fancy | less --tabs=4 -RFX
+[http]
+	sslBackend = openssl
+	sslVerify = false

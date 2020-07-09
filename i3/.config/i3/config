@@ -4,26 +4,23 @@ set $mod1 Mod1
 new_window pixel 1
 new_float normal
 
-hide_edge_borders none
+hide_edge_borders both 
 
 bindsym $mod+u border none
 bindsym $mod+y border pixel 1
 bindsym $mod+n border normal
 
-# font xft:URWGothic-Book 11
 font pango:System San Francisco Display 11
 
 floating_modifier $mod
 
 bindsym $mod+Shift+x exec i3lock-fancy
 
-bindsym $mod+m exec google-chrome-stable
+bindsym $mod+m exec chromium 
 bindsym $mod+z exec --no-startup-id zeal
 bindsym $mod+8 exec code
 bindsym $mod+9 exec emacs
-
-
-bindsym $mod+Return exec i3-sensible-terminal
+bindsym $mod+Return exec alacritty 
 
 # Window kill command
 bindsym $mod+Shift+q kill
@@ -106,6 +103,7 @@ set $ws3 3
 set $ws4 4
 set $ws5 5
 set $ws6 6
+set $ws7 7
 
 # switch to workspace
 bindsym $mod+1 workspace $ws1
@@ -114,6 +112,7 @@ bindsym $mod+3 workspace $ws3
 bindsym $mod+4 workspace $ws4
 bindsym $mod+5 workspace $ws5
 bindsym $mod+6 workspace $ws6
+bindsym $mod+7 workspace $ws7
 
 # Move focused container to workspace
 bindsym $mod+Ctrl+1 move container to workspace $ws1
@@ -122,6 +121,7 @@ bindsym $mod+Ctrl+3 move container to workspace $ws3
 bindsym $mod+Ctrl+4 move container to workspace $ws4
 bindsym $mod+Ctrl+5 move container to workspace $ws5
 bindsym $mod+Ctrl+6 move container to workspace $ws6
+bindsym $mod+Ctrl+7 move container to workspace $ws7
 
 # Move to workspace with focused container
 bindsym $mod+Shift+1 move container to workspace $ws1; workspace $ws1
@@ -130,6 +130,12 @@ bindsym $mod+Shift+3 move container to workspace $ws3; workspace $ws3
 bindsym $mod+Shift+4 move container to workspace $ws4; workspace $ws4
 bindsym $mod+Shift+5 move container to workspace $ws5; workspace $ws5
 bindsym $mod+Shift+6 move container to workspace $ws6; workspace $ws6
+bindsym $mod+Shift+7 move container to workspace $ws7; workspace $ws7
+
+# workspace assign
+#assign [class="code"] 2 
+#assign [class="emacs"] 3  
+#assign [class="zeal"] 4  
 
 # Open specific applications in floating mode
 for_window [title="alsamixer"] floating enable border pixel 1
@@ -187,14 +193,14 @@ mode "$mode_system" {
     bindsym Return mode "default"
     bindsym Escape mode "default"
 }
-bindsym $mod1+Shift+r mode "$mode_system"
+bindsym $mod+0 mode "$mode_system"
 
 ## Manual management of external displays
 # Set the shortcuts and what they do
-set $mode_display Ext Screen (v) VGA ON, (h) HDMI ON, (x) VGA OFF, (y) HDMI OFF
+set $mode_display Ext Screen (v) VGA ON, (d) DP2 ON, (x) VGA OFF, (y) DP2 OFF
 mode "$mode_display" {
-    bindsym h exec --no-startup-id xrandr --output HDMI2 --auto --scale 1.5x1.5 --right-of eDP1, mode "default"
-    bindsym y exec --no-startup-id xrandr --output HDMI2 --auto --off, mode "default"
+    bindsym d exec --no-startup-id xrandr --output DP2 --mode 3840x2160 --pos 2560x0 --rotate normal, mode "default" 
+    bindsym y exec --no-startup-id xrandr --output DP2 --auto --off, mode "default"
 
     # back to normal: Enter or Escape
     bindsym Return mode "default"
@@ -230,16 +236,18 @@ mode "resize" {
 # Autostart applications
 exec --no-startup-id xfce4-power-manager
 exec --no-startup-id clipit
-exec --no-startup-id feh --bg-scale /home/bitcat/Pictures/angle.jpg
+exec --no-startup-id feh --bg-scale /home/bitcat/Pictures/mars.jpg
 exec --no-startup-id electron-ssr
+exec --no-startup-id redshift
+exec --no-startup-id safeeyes
+exec --no-startup-id blueman-manager 
 exec_always --no-startup-id nm-applet
 exec_always --no-startup-id fcitx
-exec_always --no-startup-id compton -b
+exec --no-startup-id picom  -b
 exec_always --no-startup-id utools
 exec_always --no-startup-id setxkbmap -option 'ctrl:nocaps'
 exec_always --no-startup-id ff-theme-util
 exec_always --no-startup-id fix_xcursor
-exec_always --no-startup-id $HOME/.config/polybar/i3wmthemer_bar_launch.sh
 
 # Theme colors
 client.focused #b0b287 #1d1e26 #b0b287 #789073 #789073
@@ -251,8 +259,8 @@ client.placeholder #b0b287 #1d1e26 #b0b287 #789073 #789073
 client.background #1d1e26
 
 # Gaps
-gaps inner 2
-gaps outer -2
+gaps inner 2 
+gaps outer 2 
 
 smart_gaps on
 
@@ -302,3 +310,60 @@ bindsym XF86AudioMute exec --no-startup-id amixer -q set Master toggle
 # Screen brightness controls use backlight
 bindsym XF86MonBrightnessUp exec xbacklight +5 # increase screen brightness
 bindsym XF86MonBrightnessDown exec xbacklight -5 # decrease screen brightnes
+
+# redshift modes
+bindsym $mod+$mod1+r mode "$mode_redshift"
+set $mode_redshift Set colour temperature: (a)uto, (r)eset, (2)500K, (3)000K, (4)000K, (5)000K
+set $kill_redshift pkill -9 redshift;
+mode "$mode_redshift" {
+    bindsym a exec --no-startup-id "$kill_redshift redshift -P -t 5000:4000", mode "default"
+    bindsym r exec --no-startup-id "$kill_redshift redshift -x", mode "default"
+    bindsym 2 exec --no-startup-id "$kill_redshift redshift -P -O 2500", mode "default"
+    bindsym 3 exec --no-startup-id "$kill_redshift redshift -P -O 3000", mode "default"
+    bindsym 4 exec --no-startup-id "$kill_redshift redshift -P -O 4000", mode "default"
+    bindsym 5 exec --no-startup-id "$kill_redshift redshift -P -O 5000", mode "default"
+ 
+    # exit mode: "Enter" or "Escape"
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+
+# alttab setup
+
+exec --no-startup-id alttab -fg "#d58681" -bg "#4a4a4a" -frame "#eb564d" -t 128x150 -i 127x64
+
+
+
+# Start i3bar to display a workspace bar (plus the system information i3status if available)
+bar {
+    i3bar_command i3bar
+    status_command py3status -c ~/.config/i3/i3status.conf
+    position bottom
+
+## please set your primary output first. Example: 'xrandr --output eDP1 --primary'
+#   tray_output primary
+#   tray_output eDP1
+
+    bindsym button4 nop bindsym button5 nop
+    font xft:URWGothic-Book 11
+    strip_workspace_numbers yes
+
+    colors {
+        background #4a4a4a
+        statusline #F9FAF9
+        separator  #454947
+
+        focused_workspace  #F9FAF9 $acolor #F9FAF9
+        active_workspace   #595B5B #353836 #FDF6E3
+        inactive_workspace #595B5B #283339 #EEE8D5
+        binding_mode       $acolor #2C2C2C #F9FAF9
+        urgent_workspace   $acolor #FDF6E3 #E5201D
+    }
+}
+
+# hide/unhide i3status bar
+bindsym $mod+$mod1+m bar mode toggle
+
+# Moving workspaces between screens 
+bindsym $mod+p move workspace to output right
+bindsym $mod+Shift+p move workspace to output left

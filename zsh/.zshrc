@@ -10,7 +10,7 @@ export ZSH="/home/bitcat/.oh-my-zsh"
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
 ZSH_THEME="robbyrussell"
 
-. ~/z.sh
+. ~/dotfiles/z.sh
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
 # a theme from this variable instead of looking in ~/.oh-my-zsh/themes/
@@ -98,6 +98,7 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
+alias i3config="vim ~/.config/i3/config"
 alias diff="diff-so-fancy"
 alias cat="bat"
 alias ls="exa"
@@ -119,7 +120,26 @@ export PATH="$PATH":"$HOME/.pub-cache/bin"
 
 bindkey ',' autosuggest-accept
 
+# fzf setup
+#
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+fzf-history-widget-accept() {
+  fzf-history-widget
+  zle accept-line
+}
+
+zle     -N     fzf-history-widget-accept
+bindkey '^X^R' fzf-history-widget-accept
+
+export FZF_CTRL_T_OPTS="--preview '(highlight -O ansi -l {} 2> /dev/null || cat {} || tree -C {}) 2> /dev/null | head -200'"
+
+# 这行配置开启 ag 查找隐藏文件 及忽略 .git 文件
+export FZF_DEFAULT_COMMAND='ag --hidden --ignore .git -l -g ""'
+# or
+#export FZF_DEFAULT_COMMAND="fd --exclude={.git,.idea,.sass-cache,node_modules,build} --type f"
+
+export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --preview '(highlight -O ansi {} || cat {}) 2> /dev/null | head -500'"
 
 eval "$(rbenv init -)"
 
@@ -136,3 +156,5 @@ start_tmux
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 
 export PATH="/home/bitcat/.emacs.d/bin:$PATH"
+export PATH="$PATH:/usr/lib/dart/bin"
+

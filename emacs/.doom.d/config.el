@@ -11,6 +11,7 @@
 
  (setq package-archives '(("gnu"   . "http://elpa.emacs-china.org/gnu/")
                            ("melpa" . "http://elpa.emacs-china.org/melpa/")))
+
 ;; Doom exposes five (optional) variables for controlling fonts in Doom. Here
 ;; are the three important ones:
 ;;
@@ -19,7 +20,11 @@
 ;;
 ;; They all accept either a font-spec, font string ("Input Mono-12"), or xlfd
 ;; font string. You generally only need these two:
-(setq doom-font (font-spec :family "monospace" :size 12))
+(setq doom-font (font-spec :family "monospace" :size 20)
+ doom-big-font (font-spec :family "monospace" :size 36)
+ doom-variable-pitch-font (font-spec :family "monospace" :size 18)
+
+      )
 
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
@@ -36,11 +41,6 @@
 ;; `nil' to disable it:
 (setq display-line-numbers-type t)
 
-;; company setup
-
-(require 'company)
-(setq company-idle-delay 0.2
-      company-minimum-prefix-length 2)
 ;; Here are some additional functions/macros that could help you configure Doom:
 ;;
 ;; - `load!' for loading external *.el files relative to this one
@@ -60,346 +60,496 @@
 ;;(setq +lsp-company-backend '(company-lsp :with company-tabnine :separate))
 (setq-default global-visual-line-mode t)
 
-(use-package company-lsp
-  :defer t
-  :custom (company-lsp-cache-candidates 'auto))
+(use-package! awesome-tab
+  :config
+  (awesome-tab-mode t)
+  (setq awesome-tab-style 'slant)
+  ;; winum users can use `winum-select-window-by-number' directly.
+  (defun my-select-window-by-number (win-id)
+    "Use `ace-window' to select the window by using window index.
+WIN-ID : Window index."
+    (let ((wnd (nth (- win-id 1) (aw-window-list))))
+      (if wnd
+          (aw-switch-to-window wnd)
+        (message "No such window."))))
 
-(use-package undo-tree
-  :ensure t
+  (defun my-select-window ()
+    (interactive)
+    (let* ((event last-input-event)
+           (key (make-vector 1 event))
+           (key-desc (key-description key)))
+      (my-select-window-by-number
+       (string-to-number (car (nreverse (split-string key-desc "-")))))))
+
+  (when (not (display-graphic-p))
+    (setq frame-background-mode 'dark))
+  (defun awesome-tab-buffer-groups ()
+    "`awesome-tab-buffer-groups' control buffers' group rules.
+
+Group awesome-tab with mode if buffer is derived from `eshell-mode' `emacs-lisp-mode' `dired-mode' `org-mode' `magit-mode'.
+All buffer name start with * will group to \"Emacs\".
+Other buffer group by `awesome-tab-get-group-name' with project name."
+    (list
+     (cond
+      ((or (string-equal "*" (substring (buffer-name) 0 1))
+           (memq major-mode '(magit-process-mode
+                              magit-status-mode
+                              magit-diff-mode
+                              magit-log-mode
+                              magit-file-mode
+                              magit-blob-mode
+                              magit-blame-mode
+                              )))
+       "Emacs")
+      ((derived-mode-p 'eshell-mode)
+       "EShell")
+      ((derived-mode-p 'emacs-lisp-mode)
+       "Elisp")
+      ((derived-mode-p 'dired-mode)
+       "Dired")
+      ((memq major-mode '(org-mode org-agenda-mode diary-mode))
+       "OrgMode")
+      (t
+       (awesome-tab-get-group-name (current-buffer))))))
+
+
+
+;;   (defhydra awesome-fast-switch (:hint nil)
+;;     "
+;;  ^^^^Fast Move             ^^^^Tab                    ^^Search            ^^Misc
+;; -^^^^--------------------+-^^^^---------------------+-^^----------------+-^^---------------------------
+;;    ^_k_^   prev group    | _C-a_^^     select first | _b_ search buffer | _C-k_   kill buffer
+;;  _h_   _l_  switch tab   | _C-e_^^     select last  | _g_ search group  | _C-S-k_ kill others in group
+;;    ^_j_^   next group    | _C-j_^^     ace jump     | ^^                | ^^
+;;  ^^0 ~ 9^^ select window | _C-h_/_C-l_ move current | ^^                | ^^
+;; -^^^^--------------------+-^^^^---------------------+-^^----------------+-^^---------------------------
+;; "
+;;     ("h" awesome-tab-backward-tab)
+;;     ("j" awesome-tab-forward-group)
+;;     ("k" awesome-tab-backward-group)
+;;     ("l" awesome-tab-forward-tab)
+;;     ("0" my-select-window)
+;;     ("1" my-select-window)
+;;     ("2" my-select-window)
+;;     ("3" my-select-window)
+;;     ("4" my-select-window)
+;;     ("5" my-select-window)
+;;     ("6" my-select-window)
+;;     ("7" my-select-window)
+;;     ("8" my-select-window)
+;;     ("9" my-select-window)
+;;     ("C-a" awesome-tab-select-beg-tab)
+;;     ("C-e" awesome-tab-select-end-tab)
+;;     ("C-j" awesome-tab-ace-jump)
+;;     ("C-h" awesome-tab-move-current-tab-to-left)
+;;     ("C-l" awesome-tab-move-current-tab-to-right)
+;;     ("b" ivy-switch-buffer)
+;;     ("g" awesome-tab-counsel-switch-group)
+;;     ("C-k" kill-current-buffer)
+;;     ("C-S-k" awesome-tab-kill-other-buffers-in-current-group)
+;;     ("q" nil "quit"))
+;;   )
+(setq awesome-tab-style "bar")
+(setq awesome-tab-set-icons t)
+(setq awesome-tab-set-bar t)
+(setq awesome-tab-set-bar 'over)
+(setq awesome-tab-set-modified-marker t)
+(setq awesome-tab-set-close-button nil)
+(setq awesome-tab-modified-marker "*")
+(global-set-key (kbd "C-c j") 'awesome-tab-forward-tab)
+(global-set-key (kbd "C-c k") 'awesome-tab-backward-tab)
+(global-set-key (kbd "C-c o") 'awesome-tab-switch-group)
+
+(use-package! rainbow-delimiters
+  :config
+  (custom-set-faces
+   '(rainbow-delimiters-mismatched-face ((t (:foreground "white" :background "red" :weight bold))))
+   '(rainbow-delimiters-unmatched-face ((t (:foreground "white" :background "red" :weight bold))))
+
+   ;; show parents (in case of rainbow failing !)
+   '(show-paren-match ((t (:foreground "white" :background "green" :weight bold))))
+   '(show-paren-mismatch ((t (:foreground "white" :background "red" :weight bold)))))
+  (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
+;; highlight brackets
+  )
+(use-package! eyebrowse
   :config
   (progn
-    (global-undo-tree-mode)
-    (setq undo-tree-visualizer-timestamps t)
-    (setq undo-tree-visualizer-diff t)
-    ))
+    (define-key eyebrowse-mode-map (kbd "M-1") 'eyebrowse-switch-to-window-config-1)
+    (define-key eyebrowse-mode-map (kbd "M-2") 'eyebrowse-switch-to-window-config-2)
+    (define-key eyebrowse-mode-map (kbd "M-3") 'eyebrowse-switch-to-window-config-3)
+    (define-key eyebrowse-mode-map (kbd "M-4") 'eyebrowse-switch-to-window-config-4)
+    (define-key eyebrowse-mode-map (kbd "M-5") 'eyebrowse-switch-to-window-config-5)
+    (eyebrowse-mode t)
+    (setq eyebrowse-new-workspace t)))
+
+(use-package! ctrlf
+  :config
+  (add-hook! 'after-init-hook #'ctrlf-mode)
+  )
+
+(use-package! imenu-list
+  :config
+  (setq imenu-list-auto-resize t)
+  (setq imenu-list-focus-after-activation t)
+  (setq imenu-list-after-jump-hook nil)
+  (add-hook 'menu-list-after-jump-hook #'recenter-top-bottom)
+  )
+
+(use-package! undo-fu
+  :after-call doom-switch-buffer after-find-file
+  :init
+  (after! undo-tree
+    (global-undo-tree-mode -1))
+  :config
+  ;; Store more undo history to prevent loss of data
+  (setq undo-limit 400000
+        undo-strong-limit 3000000
+        undo-outer-limit 3000000)
+
+  (define-minor-mode undo-fu-mode
+    "Enables `undo-fu' for the current session."
+    :keymap (let ((map (make-sparse-keymap)))
+              (define-key map [remap undo] #'undo-fu-only-undo)
+              (define-key map [remap redo] #'undo-fu-only-redo)
+              (define-key map (kbd "C-_")     #'undo-fu-only-undo)
+              (define-key map (kbd "M-_")     #'undo-fu-only-redo)
+              (define-key map (kbd "C-M-_")   #'undo-fu-only-redo-all)
+              (define-key map (kbd "C-x r u") #'undo-fu-session-save)
+              (define-key map (kbd "C-x r U") #'undo-fu-session-recover)
+              map)
+    :init-value nil
+    :global t)
+
+  (undo-fu-mode +1))
+
+
+(use-package! undo-fu-session
+  :hook (undo-fu-mode . global-undo-fu-session-mode)
+  :preface
+  (setq undo-fu-session-directory (concat doom-cache-dir "undo-fu-session/")
+        undo-fu-session-incompatible-files '("/COMMIT_EDITMSG\\'" "/git-rebase-todo\\'"))
+
+  ;; HACK We avoid `:config' here because `use-package's `:after' complicates
+  ;;      the load order of a package's `:config' block and makes it impossible
+  ;;      for the user to override its settings with merely `after!' (or
+  ;;      `eval-after-load'). See jwiegley/use-package#829.
+  (after! undo-fu-session
+    ;; HACK Use the faster zstd to compress undo files instead of gzip
+    (when (executable-find "zstd")
+      (defadvice! doom--undo-fu-session-use-zstd-a (filename)
+        :filter-return #'undo-fu-session--make-file-name
+        (if undo-fu-session-compression
+            (concat (file-name-sans-extension filename) ".zst")
+          filename)))))
+
+
+(use-package! undo-tree
+  :disabled
+  ;; Branching & persistent undo
+  :after-call doom-switch-buffer-hook after-find-file
+  :config
+  (setq undo-tree-visualizer-diff t
+        undo-tree-auto-save-history t
+        undo-tree-enable-undo-in-region t
+        ;; Increase undo-limits by a factor of ten to avoid emacs prematurely
+        ;; truncating the undo history and corrupting the tree. See
+        ;; https://github.com/syl20bnr/spacemacs/issues/12110
+        undo-limit 800000
+        undo-strong-limit 12000000
+        undo-outer-limit 120000000
+        undo-tree-history-directory-alist
+        `(("." . ,(concat doom-cache-dir "undo-tree-hist/"))))
+
+  ;; Compress undo-tree history files with zstd, if available. File size isn't
+  ;; the (only) concern here: the file IO barrier is slow for Emacs to cross;
+  ;; reading a tiny file and piping it in-memory through zstd is *slightly*
+  ;; faster than Emacs reading the entire undo-tree file from the get go (on
+  ;; SSDs). Whether or not that's true in practice, we still enjoy zstd's ~80%
+  ;; file savings (these files add up over time and zstd is so incredibly fast).
+  (when (executable-find "zstd")
+    (defadvice! doom--undo-tree-make-history-save-file-name-a (file)
+      :filter-return #'undo-tree-make-history-save-file-name
+      (concat file ".zst")))
+
+  ;; Strip text properties from undo-tree data to stave off bloat. File size
+  ;; isn't the concern here; undo cache files bloat easily, which can cause
+  ;; freezing, crashes, GC-induced stuttering or delays when opening files.
+  (defadvice! doom--undo-tree-strip-text-properties-a (&rest _)
+    :before #'undo-list-transfer-to-tree
+    (dolist (item buffer-undo-list)
+      (and (consp item)
+           (stringp (car item))
+           (setcar item (substring-no-properties (car item))))))
+
+  ;; Undo-tree is too chatty about saving its history files. This doesn't
+  ;; totally suppress it logging to *Messages*, it only stops it from appearing
+  ;; in the echo-area.
+  (advice-add #'undo-tree-save-history :around #'doom-shut-up-a)
+
+  (global-undo-tree-mode +1))
+
+
+(use-package! counsel
+    :hook
+    (after-init . ivy-mode)
+    (counsel-grep-post-action . better-jumper-set-jump)
+    :diminish ivy-mode
+    :config
+    (setq counsel-find-file-ignore-regexp "\\(?:^[#.]\\)\\|\\(?:[#~]$\\)\\|\\(?:^Icon?\\)"
+          counsel-describe-function-function #'helpful-callable
+          ncounsel-describe-variable-function #'helpful-variable
+          ;; Add smart-casing (-S) to default command arguments:
+          counsel-rg-base-command "rg -S --no-heading --line-number --color never %s ."
+          counsel-ag-base-command "ag -S --nocolor --nogroup %s"
+          counsel-pt-base-command "pt -S --nocolor --nogroup -e %s"
+          counsel-find-file-at-point t)
+       )
+
+     (use-package! ivy-rich
+       :config
+       (ivy-rich-mode 1)
+       (setq ivy-format-function #'ivy-format-function-line))
+     ;;[[https://github.com/gilbertw1/better-jumper][gilbertw1/better-jumper: A configurable jump list implementation for Emacs]]
+     ;;
+(use-package! company-lsp)
+(after! company
+  (setq company-idle-delay 0.5
+        company-minimum-prefix-length 2
+        company-transformers nil)
+  (setq company-show-numbers t)
+  (define-key company-active-map (kbd "C-j") 'company-select-next-or-abort)
+  (define-key company-active-map (kbd "C-k") 'company-select-previous-or-abort)
+
+  )
+
+(defun ora-company-number ()
+  "Forward to `company-complete-number'.
+Unless the number is potentially part of the candidate.
+In that case, insert the number."
+  (interactive)
+  (let* ((k (this-command-keys))
+         (re (concat "^" company-prefix k)))
+    (if (or (cl-find-if (lambda (s) (string-match re s))
+                        company-candidates)
+            (> (string-to-number k)
+               (length company-candidates))
+            (looking-back "[0-9]+\\.[0-9]*" (line-beginning-position)))
+        (self-insert-command 1)
+      (company-complete-number
+       (if (equal k "0")
+           10
+         (string-to-number k))))))
+
+(defun ora--company-good-prefix-p (orig-fn prefix)
+  (unless (and (stringp prefix) (string-match-p "\\`[0-9]+\\'" prefix))
+    (funcall orig-fn prefix)))
+(advice-add 'company--good-prefix-p :around #'ora--company-good-prefix-p)
+
+(let ((map company-active-map))
+  (mapc (lambda (x) (define-key map (format "%d" x) 'ora-company-number))
+        (number-sequence 0 9))
+  (define-key map " " (lambda ()
+                        (interactive)
+                        (company-abort)
+                        (self-insert-command 1)))
+  )
+)
+
+
+(use-package! company-tabnine
+  :when (featurep! :completion company)
+  :config
+  (setq company-tabnine--disable-next-transform nil)
+  (defun my-company--transform-candidates (func &rest args)
+    (if (not company-tabnine--disable-next-transform)
+        (apply func args)
+      (setq company-tabnine--disable-next-transform nil)
+      (car args)))
+
+  (defun my-company-tabnine (func &rest args)
+    (when (eq (car args) 'candidates)
+      (setq company-tabnine--disable-next-transform t))
+    (apply func args))
+
+  (advice-add #'company--transform-candidates :around #'my-company--transform-candidates)
+  (advice-add #'company-tabnine :around #'my-company-tabnine)
+  ;; Trigger completion immediately.
+  ;; (setq company-idle-delay 0)
+
+  ;; Number the candidates (use M-1, M-2 etc to select completions).
+  (setq company-show-numbers t)
+
+  ;; Use the tab-and-go frontend.
+  ;; Allows TAB to select and complete at the same time.
+  (company-tng-configure-default)
+  (setq company-frontends
+        '(company-tng-frontend
+          company-pseudo-tooltip-frontend
+          company-echo-metadata-frontend))
+  )
+
+;;  (set-company-backend! 'sh-mode nil) ; unsets backends for sh-mode
+(set-company-backend! '(c-mode
+                        c++-mode
+                        ess-mode
+                        haskell-mode
+                        ;;emacs-lisp-mode
+                        lisp-mode
+                        sh-mode
+                        php-mode
+                        python-mode
+                        go-mode
+                        ruby-mode
+                        rust-mode
+                        js-mode
+                        css-mode
+                        org-mode
+                        web-mode
+                        )
+  '(:separate company-tabnine
+              company-files
+              company-yasnippet))
+
+(setq +lsp-company-backend '(company-lsp :with company-tabnine :separate))
+
+(use-package! highlight-indent-guides
+:config
+(setq highlight-indent-guides-method 'character)
+(setq highlight-indent-guides-auto-enabled nil)
+(set-face-background 'highlight-indent-guides-even-face "dimgray")
+(set-face-foreground 'highlight-indent-guides-character-face "dimgray")
+)
+
+;;; -*- lexical-binding: t; -*-
+;; we will call `blink-matching-open` ourselves...
+
+(remove-hook 'post-self-insert-hook
+             #'blink-paren-post-self-insert-function)
+;; this still needs to be set for `blink-matching-open` to work
+(setq blink-matching-paren 'show)
+
+(let ((ov nil)) ; keep track of the overlay
+  (advice-add
+   #'show-paren-function
+   :after
+    (defun show-paren--off-screen+ (&rest _args)
+      "Display matching line for off-screen paren."
+      (when (overlayp ov)
+        (delete-overlay ov))
+      ;; check if it's appropriate to show match info,
+      ;; see `blink-paren-post-self-insert-function'
+      (when (and (overlay-buffer show-paren--overlay)
+                 (not (or cursor-in-echo-area
+                          executing-kbd-macro
+                          noninteractive
+                          (minibufferp)
+                          this-command))
+                 (and (not (bobp))
+                      (memq (char-syntax (char-before)) '(?\) ?\$)))
+                 (= 1 (logand 1 (- (point)
+                                   (save-excursion
+                                     (forward-char -1)
+                                     (skip-syntax-backward "/\\")
+                                     (point))))))
+        ;; rebind `minibuffer-message' called by
+        ;; `blink-matching-open' to handle the overlay display
+        (cl-letf (((symbol-function #'minibuffer-message)
+                   (lambda (msg &rest args)
+                     (let ((msg (apply #'format-message msg args)))
+                       (setq ov (display-line-overlay+
+                                 (window-start) msg ))))))
+          (blink-matching-open))))))
+
+(defun display-line-overlay+ (pos str &optional face)
+  "Display line at POS as STR with FACE.
+
+FACE defaults to inheriting from default and highlight."
+  (let ((ol (save-excursion
+              (goto-char pos)
+              (make-overlay (line-beginning-position)
+                            (line-end-position)))))
+    (overlay-put ol 'display str)
+    (overlay-put ol 'face
+                 (or face '(:inherit default :inherit highlight)))
+    ol))
+
+(setq show-paren-style 'paren
+      show-paren-delay 0.03
+      show-paren-highlight-openparen t
+      show-paren-when-point-inside-paren nil
+      show-paren-when-point-in-periphery t)
+(show-paren-mode 1)
+
+
+
+(use-package! awesome-pair)
+
+(setq default-tab-width 2)
+(add-to-list 'default-frame-alist
+             '(ns-transparent-titlebar . t))
+(add-to-list 'default-frame-alist
+             '(ns-appearance . dark))
+
+(global-auto-revert-mode t)
+
+(add-hook 'org-mode-hook #'auto-fill-mode)
+
+(setq
+ web-mode-markup-indent-offset 2
+ web-mode-code-indent-offset 2
+ web-mode-css-indent-offset 2
+ org-agenda-skip-scheduled-if-done t
+ js-indent-level 2
+ typescript-indent-level 2
+ json-reformat:indent-width 2
+ prettier-js-args '("--single-quote")
+ projectile-project-search-path '("~/dev/")
+ dired-dwim-target t
+ org-ellipsis " ▾ "
+ org-bullets-bullet-list '("·")
+ org-tags-column -80
+ css-indent-offset 2
+                                  )
+
+(add-hook! reason-mode
+  (add-hook 'before-save-hook #'refmt-before-save nil t))
+
+(add-hook!
+  js2-mode 'prettier-js-mode
+  (add-hook 'before-save-hook #'refmt-before-save nil t))
+
+
+(after! ruby
+  (add-to-list 'hs-special-modes-alist
+               `(ruby-mode
+                 ,(rx (or "def" "class" "module" "do" "{" "[")) ; Block start
+                 ,(rx (or "}" "]" "end"))                       ; Block end
+                 ,(rx (or "#" "=begin"))                        ; Comment start
+                 ruby-forward-sexp nil)))
+
+(after! web-mode
+  (add-to-list 'auto-mode-alist '("\\.njk\\'" . web-mode)))
+
+(defun +data-hideshow-forward-sexp (arg)
+  (let ((start (current-indentation)))
+    (forward-line)
+    (unless (= start (current-indentation))
+      (require 'evil-indent-plus)
+      (let ((range (evil-indent-plus--same-indent-range)))
+        (goto-char (cadr range))
+        (end-of-line)))))
+
+(add-to-list 'hs-special-modes-alist '(yaml-mode "\\s-*\\_<\\(?:[^:]+\\)\\_>" "" "#" +data-hideshow-forward-sexp nil))
+
+(remove-hook 'enh-ruby-mode-hook #'+ruby|init-robe)
 
 (use-package company
-  :ensure t
-  :config
-  (progn
-    (add-hook 'after-init-hook 'global-company-mode)))
-
-(use-package which-key
-  :config
-  (progn
-    (which-key-mode)
-    (which-key-setup-side-window-bottom)))
-
-(use-package recentf
-  :config
-  (progn
-    (setq recentf-max-saved-items 200
-          recentf-max-menu-items 15)
-    (recentf-mode)
-    ))
-
-(use-package neotree
-  :custom
-  (neo-theme 'nerd2)
-  :config
-  (progn
-    (setq neo-smart-open t)
-    (setq neo-theme (if (display-graphic-p) 'icons 'nerd))
-    (setq neo-window-fixed-size nil)
-    ;; (setq-default neo-show-hidden-files nil)
-    (global-set-key [f2] 'neotree-toggle)
-    (global-set-key [f8] 'neotree-dir)))
-
-(use-package magit)
-
-;; (use-package git-gutter+
-;;   :ensure t
-;;   :config
-;;   (progn
-;;     (global-git-gutter+-mode)))
-
-(use-package yasnippet
-  :diminish yas-minor-mode
-  :init (yas-global-mode)
-  :config
-  (progn
-    (yas-global-mode)
-    (add-hook 'hippie-expand-try-functions-list 'yas-hippie-try-expand)
-    (setq yas-key-syntaxes '("w_" "w_." "^ "))
-    ;; (setq yas-installed-snippets-dir "~/elisp/yasnippet-snippets")
-    (setq yas-expand-only-for-last-commands nil)
-    (yas-global-mode 1)
-    (bind-key "\t" 'hippie-expand yas-minor-mode-map)
-    (add-to-list 'yas-prompt-functions 'shk-yas/helm-prompt)))
-
-(dolist (command '(yank yank-pop))
-  (eval
-   `(defadvice ,command (after indent-region activate)
-      (and (not current-prefix-arg)
-           (member major-mode
-                   '(emacs-lisp-mode
-                     lisp-mode
-                     clojure-mode
-                     scheme-mode
-                     haskell-mode
-                     ruby-mode
-                     rspec-mode
-                     python-mode
-                     c-mode
-                     c++-mode
-                     objc-mode
-                     latex-mode
-                     js-mode
-                     plain-tex-mode))
-           (let ((mark-even-if-inactive transient-mark-mode))
-             (indent-region (region-beginning) (region-end) nil))))))
-
-(defun shk-yas/helm-prompt (prompt choices &optional display-fn)
-  "Use helm to select a snippet. Put this into `yas-prompt-functions.'"
-  (interactive)
-  (setq display-fn (or display-fn 'identity))
-  (if (require 'helm-config)
-      (let (tmpsource cands result rmap)
-        (setq cands (mapcar (lambda (x) (funcall display-fn x)) choices))
-        (setq rmap (mapcar (lambda (x) (cons (funcall display-fn x) x)) choices))
-        (setq tmpsource
-              (list
-               (cons 'name prompt)
-               (cons 'candidates cands)
-               '(action . (("Expand" . (lambda (selection) selection))))
-               ))
-        (setq result (helm-other-buffer '(tmpsource) "*helm-select-yasnippet"))
-        (if (null result)
-            (signal 'quit "user quit!")
-          (cdr (assoc result rmap))))
-    nil))
-
-;; (use-package smart-tab
-;;   :config
-;;   (progn
-;;     (defun @-enable-smart-tab ()
-;;       (smart-tab-mode))
-;;     (add-hook 'prog-mode-hook '@-enable-smart-tab)
-;;     ))
-
-
-;; (use-package treemacs
-;;   :ensure t
-;;   :defer t
-;;   :init
-;;   (with-eval-after-load 'winum
-;;     (define-key winum-keymap (kbd "M-0") #'treemacs-select-window))
-;;   :config
-;;   (progn
-;;     (setq treemacs-collapse-dirs                 (if treemacs-python-executable 3 0)
-;;           treemacs-deferred-git-apply-delay      0.5
-;;           treemacs-directory-name-transformer    #'identity
-;;           treemacs-display-in-side-window        t
-;;           treemacs-eldoc-display                 t
-;;           treemacs-file-event-delay              5000
-;;           treemacs-file-extension-regex          treemacs-last-period-regex-value
-;;           treemacs-file-follow-delay             0.2
-;;           treemacs-file-name-transformer         #'identity
-;;           treemacs-follow-after-init             t
-;;           treemacs-git-command-pipe              ""
-;;           treemacs-goto-tag-strategy             'refetch-index
-;;           treemacs-indentation                   2
-;;           treemacs-indentation-string            " "
-;;           treemacs-is-never-other-window         nil
-;;           treemacs-max-git-entries               5000
-;;           treemacs-missing-project-action        'ask
-;;           treemacs-no-png-images                 nil
-;;           treemacs-no-delete-other-windows       t
-;;           treemacs-project-follow-cleanup        nil
-;;           treemacs-persist-file                  (expand-file-name ".cache/treemacs-persist" user-emacs-directory)
-;;           treemacs-position                      'left
-;;           treemacs-recenter-distance             0.1
-;;           treemacs-recenter-after-file-follow    nil
-;;           treemacs-recenter-after-tag-follow     nil
-;;           treemacs-recenter-after-project-jump   'always
-;;           treemacs-recenter-after-project-expand 'on-distance
-;;           treemacs-show-cursor                   nil
-;;           treemacs-show-hidden-files             t
-;;           treemacs-silent-filewatch              nil
-;;           treemacs-silent-refresh                nil
-;;           treemacs-sorting                       'alphabetic-asc
-;;           treemacs-space-between-root-nodes      t
-;;           treemacs-tag-follow-cleanup            t
-;;           treemacs-tag-follow-delay              1.5
-;;           treemacs-user-mode-line-format         nil
-;;           treemacs-width                         35)
-
-;;     ;; The default width and height of the icons is 22 pixels. If you are
-;;     ;; using a Hi-DPI display, uncomment this to double the icon size.
-;;     ;;(treemacs-resize-icons 44)
-
-;;     (treemacs-follow-mode t)
-;;     (treemacs-filewatch-mode t)
-;;     (treemacs-fringe-indicator-mode t)
-;;     (pcase (cons (not (null (executable-find "git")))
-;;                  (not (null treemacs-python-executable)))
-;;       (`(t . t)
-;;        (treemacs-git-mode 'deferred))
-;;       (`(t . _)
-;;        (treemacs-git-mode 'simple))))
-;;   :bind
-;;   (:map global-map
-;;         ("M-0"       . treemacs-select-window)
-;;         ("C-x t 1"   . treemacs-delete-other-windows)
-;;         ("C-x t t"   . treemacs)
-;;         ("C-x t B"   . treemacs-bookmark)
-;;         ("C-x t C-t" . treemacs-find-file)
-;;         ("C-x t M-t" . treemacs-find-tag)))
-
-;; (use-package treemacs-evil
-;;   :after treemacs evil
-;;   :ensure t)
-
-;; (use-package treemacs-projectile
-;;   :after treemacs projectile
-;;   :ensure t)
-
-;; (use-package treemacs-icons-dired
-;;   :after treemacs dired
-;;   :ensure t
-;;   :config (treemacs-icons-dired-mode))
-
-;; (use-package treemacs-magit
-;;   :after treemacs magit
-;;   :ensure t)
-
-;; (use-package treemacs-persp
-;;   :after treemacs persp-mode
-;;   :ensure t
-;;   :config (treemacs-set-scope-type 'Perspectives))
-
-;; (use-package lsp-treemacs
-;;   :commands lsp-treemacs-errors-list
-;;   :config
-;;   (lsp-metals-treeview-enable t)
-;;   (setq lsp-metals-treeview-show-when-views-received t))
-
-
-;; (use-package ccls
-;;   :ensure t
-;;   :config
-;;   (setq ccls-executable (expand-file-name "~/.emacs.d/ccls"))
-;;   )
-
-;; (use-package eglot
-  ;; :config
-  ;; (add-hook 'prog-mode-hook 'eglot-ensure))
-
-(use-package lsp-mode
-  :ensure t
-  :custom
-  (lsp-enable-snippet t)
-  (lsp-keep-workspace-alive t)
-  (lsp-enable-xref t)
-  (lsp-enable-imenu t)
-  (lsp-enable-completion-at-point nil)
-
-  :config
-  (add-hook 'go-mode-hook #'lsp)
-  (add-hook 'python-mode-hook #'lsp)
-  (add-hook 'c++-mode-hook #'lsp)
-  (add-hook 'c-mode-hook #'lsp)
-  (add-hook 'rust-mode-hook #'lsp)
-  (add-hook 'html-mode-hook #'lsp)
-  (add-hook 'js-mode-hook #'lsp)
-  (add-hook 'typescript-mode-hook #'lsp)
-  (add-hook 'json-mode-hook #'lsp)
-  (add-hook 'yaml-mode-hook #'lsp)
-  (add-hook 'dockerfile-mode-hook #'lsp)
-  (add-hook 'shell-mode-hook #'lsp)
-  (add-hook 'css-mode-hook #'lsp)
-
-  (lsp-register-client
-   (make-lsp-client :new-connection (lsp-stdio-connection "pyls")
-                    :major-modes '(python-mode)
-                    :server-id 'pyls))
-  (setq company-minimum-prefix-length 1
-        company-idle-delay 0.500) ;; default is 0.2
-  (require 'lsp-clients)
-  :commands lsp)
-
-(use-package company-lsp
-  :ensure t
-  :config
-  (push 'company-lsp company-backends))
-
-(use-package lsp-ui
-  :ensure t
-  :custom-face
-  (lsp-ui-doc-background ((t (:background ni))))
-  :init (setq lsp-ui-doc-enable t
-              lsp-ui-doc-include-signature t
-
-              lsp-enable-snippet nil
-              lsp-ui-sideline-enable nil
-              lsp-ui-peek-enable nil
-
-              lsp-ui-doc-position              'at-point
-              lsp-ui-doc-header                nil
-              lsp-ui-doc-border                "white"
-              lsp-ui-doc-include-signature     t
-              lsp-ui-sideline-update-mode      'point
-              lsp-ui-sideline-delay            1
-              lsp-ui-sideline-ignore-duplicate t
-              lsp-ui-peek-always-show          t
-              lsp-ui-flycheck-enable           nil
-              )
-  :bind (:map lsp-ui-mode-map
-              ([remap xref-find-definitions] . lsp-ui-peek-find-definitions)
-              ([remap xref-find-references] . lsp-ui-peek-find-references)
-              ("C-c u" . lsp-ui-imenu))
-  :config
-  (setq lsp-ui-sideline-ignore-duplicate t)
-  (add-hook 'lsp-mode-hook 'lsp-ui-mode))
-
-(setq lsp-prefer-capf t)
-
-;; web tools
-(use-package emmet-mode)
-;; (use-package web-mode
-;;   :config
-;;   (progn
-;;     (defun @-web-mode-hook ()
-;;       "Hooks for Web mode."
-;;       (setq web-mode-markup-indent-offset 4)
-;;       (setq web-mode-code-indent-offset 4)
-;;       (setq web-mode-css-indent-offset 4))
-
-;;     (add-to-list 'auto-mode-alist '("\\.ts\\'" . web-mode))
-;;     (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
-;;     (add-to-list 'auto-mode-alist '("\\.css?\\'" . web-mode))
-;;     (add-to-list 'auto-mode-alist '("\\.js\\'" . web-mode))
-
-;;     (add-hook 'web-mode-hook  '@-web-mode-hook)
-;;     (setq tab-width 4)
-
-;;     (add-hook 'web-mode-hook  'emmet-mode)))
-
-;; typescirpt tide
-(use-package typescript-mode)
-(use-package tide)
-
-(defun setup-tide-mode ()
-  (interactive)
-  (tide-setup)
-  (flycheck-mode +1)
-  (setq flycheck-check-syntax-automatically '(save mode-enabled))
-  (eldoc-mode +1)
-  (tide-hl-identifier-mode +1)
-  ;; company is an optional dependency. You have to
-  ;; install it separately via package-install
-  ;; `M-x package-install [ret] company`
-  (company-mode +1))
-
-;; aligns annotation to the right hand side
-(setq company-tooltip-align-annotations t)
-(add-to-list 'auto-mode-alist '("\\.tsx\\'" . web-mode))
-
-;; formats the buffer before saving
-(add-hook 'before-save-hook 'tide-format-before-save)
-(add-hook 'typescript-mode-hook #'setup-tide-mode)
-(add-hook 'web-mode-hook
-          (lambda ()
-            (when (string-equal "tsx" (file-name-extension buffer-file-name))
-              (setup-tide-mode))))
-
+    :bind (
+         :map company-active-map
+         (("C-n"   . company-select-next)
+          ("C-p"   . company-select-previous)
+          ("C-d"   . company-show-doc-buffer)
+          ("<tab>" . company-complete))
+         )
+)

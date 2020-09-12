@@ -237,10 +237,9 @@ mode "resize" {
 exec --no-startup-id xfce4-power-manager
 exec --no-startup-id clipit
 exec --no-startup-id feh --bg-scale /home/bitcat/Pictures/mars.jpg
-exec --no-startup-id electron-ssr
 exec --no-startup-id redshift
 exec --no-startup-id safeeyes
-exec --no-startup-id blueman-manager 
+#exec --no-startup-id blueman-manager 
 exec_always --no-startup-id nm-applet
 exec_always --no-startup-id fcitx
 exec --no-startup-id picom  -b
@@ -248,6 +247,9 @@ exec_always --no-startup-id utools
 exec_always --no-startup-id setxkbmap -option 'ctrl:nocaps'
 exec_always --no-startup-id ff-theme-util
 exec_always --no-startup-id fix_xcursor
+
+exec --no-startup-id systemctl enable postgresql.service
+exec --no-startup-id systemctl start postgresql.service
 
 # Theme colors
 client.focused #b0b287 #1d1e26 #b0b287 #789073 #789073
@@ -367,3 +369,5 @@ bindsym $mod+$mod1+m bar mode toggle
 # Moving workspaces between screens 
 bindsym $mod+p move workspace to output right
 bindsym $mod+Shift+p move workspace to output left
+
+

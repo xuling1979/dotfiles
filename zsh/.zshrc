@@ -103,16 +103,11 @@ alias diff="diff-so-fancy"
 alias cat="bat"
 alias ls="exa"
 alias l="exa -lahF"
-# alias proxy
-alias setproxy="export ALL_PROXY=socks5://127.0.0.1:12333"
-alias unsetproxy="unset ALL_PROXY"
-alias ip="curl -i http://ip.cn"
 # flutter
 export PUB_HOSTED_URL=https://pub.flutter-io.cn  
 export FLUTTER_STORAGE_BASE_URL=https://storage.flutter-io.cn
-export PATH=~/flutter/flutter_sdk/flutter/bin:$PATH
-export ANDROID_HOME=/home/bitcat/Android/Sdk
-export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
+export ANDROID_SDK_ROOT=/opt/android-sdk
+export PATH=$PATH:$ANDROID_SDK_ROOT/tools:$ANDROID_SDK_ROOT/platform-tools
 export PATH=/home/bitcat/.cargo/bin:$PATH
 export PATH=~/.npm-global/bin:$PATH
 export TERM=xterm-256color
@@ -135,13 +130,10 @@ bindkey '^X^R' fzf-history-widget-accept
 export FZF_CTRL_T_OPTS="--preview '(highlight -O ansi -l {} 2> /dev/null || cat {} || tree -C {}) 2> /dev/null | head -200'"
 
 # 这行配置开启 ag 查找隐藏文件 及忽略 .git 文件
-export FZF_DEFAULT_COMMAND='ag --hidden --ignore .git -l -g ""'
-# or
-#export FZF_DEFAULT_COMMAND="fd --exclude={.git,.idea,.sass-cache,node_modules,build} --type f"
+export FZF_DEFAULT_COMMAND="fd --exclude={.git,.idea,.sass-cache,node_modules,build} --type f"
 
 export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --preview '(highlight -O ansi {} || cat {}) 2> /dev/null | head -500'"
 
-eval "$(rbenv init -)"
 
 function start_tmux() {
     if type tmux &> /dev/null; then
@@ -171,3 +163,9 @@ else
     eval `ssh-agent | tee ~/.ssh/agent.env`
     ssh-add
 fi
+
+export PATH="$HOME/.rbenv/bin:$PATH"
+eval "$(rbenv init -)"
+
+source /usr/share/fzf/key-bindings.zsh 
+source /usr/share/fzf/completion.zsh

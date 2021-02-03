@@ -20,7 +20,6 @@
 
        :completion
        (company
-        +tng
         +auto
         +childframe)           ; the ultimate code completion backend
        helm              ; the *other* search engine for love and life
@@ -93,7 +92,7 @@
        ;;editorconfig      ; let someone else argue about tabs vs spaces
        ;;ein               ; tame Jupyter notebooks with emacs
        (eval +overlay)     ; run code, run (also, repls)
-       gist              ; interacting with github gists
+       ;;gist              ; interacting with github gists
        (lookup           ; helps you navigate your code and documentation
         +docsets)        ; ...or in Dash docsets locally
        lsp
@@ -145,7 +144,7 @@
        ;;ocaml             ; an objective camel
        (org              ; organize your plain life in plain text
         +dragndrop       ; drag & drop files/images into org buffers
-        +hugo            ; use Emacs for hugo blogging
+        ;;+hugo            ; use Emacs for hugo blogging
         ;;+jupyter        ; ipython/jupyter support for babel
         ;;+pandoc          ; export-with-pandoc support
         +pomodoro        ; be fruitful with the tomato technique

@@ -32,8 +32,8 @@
 (setq doom-theme 'doom-one)
 
 ;; If you intend to use org, it is recommended you change this!
-(setq org-directory "~/Nut/org/")
-(setq deft-directory "~/Nut/org")
+(setq org-directory "~/Nutstore Files/Nutstore/org")
+(setq deft-directory "~/Nutstore Files/Nutstore/org")
 (setq deft-use-filename-as-title t)
 
 
@@ -312,14 +312,14 @@ Other buffer group by `awesome-tab-get-group-name' with project name."
        (setq ivy-format-function #'ivy-format-function-line))
      ;;[[https://github.com/gilbertw1/better-jumper][gilbertw1/better-jumper: A configurable jump list implementation for Emacs]]
      ;;
-(use-package! company-lsp)
+;; (use-package! company-lsp)
 (after! company
   (setq company-idle-delay 0.5
         company-minimum-prefix-length 2
         company-transformers nil)
   (setq company-show-numbers t)
-  (define-key company-active-map (kbd "C-j") 'company-select-next-or-abort)
-  (define-key company-active-map (kbd "C-k") 'company-select-previous-or-abort)
+  ;; (define-key company-active-map (kbd "C-j") 'company-select-next-or-abort)
+  ;; (define-key company-active-map (kbd "C-k") 'company-select-previous-or-abort)
 
   )
 
@@ -346,14 +346,14 @@ In that case, insert the number."
     (funcall orig-fn prefix)))
 (advice-add 'company--good-prefix-p :around #'ora--company-good-prefix-p)
 
-(let ((map company-active-map))
-  (mapc (lambda (x) (define-key map (format "%d" x) 'ora-company-number))
-        (number-sequence 0 9))
-  (define-key map " " (lambda ()
-                        (interactive)
-                        (company-abort)
-                        (self-insert-command 1)))
-  )
+;; (let ((map company-active-map))
+;;   (mapc (lambda (x) (define-key map (format "%d" x) 'ora-company-number))
+;;         (number-sequence 0 9))
+;;   (define-key map " " (lambda ()
+;;                         (interactive)
+;;                         (company-abort)
+;;                         (self-insert-command 1)))
+;;   )
 )
 
 
@@ -382,11 +382,11 @@ In that case, insert the number."
 
   ;; Use the tab-and-go frontend.
   ;; Allows TAB to select and complete at the same time.
-  (company-tng-configure-default)
-  (setq company-frontends
-        '(company-tng-frontend
-          company-pseudo-tooltip-frontend
-          company-echo-metadata-frontend))
+  ;;(company-tng-configure-default)
+  ;;(setq company-frontends
+  ;;      '(company-tng-frontend
+  ;;        company-pseudo-tooltip-frontend
+  ;;        company-echo-metadata-frontend))
   )
 
 ;;  (set-company-backend! 'sh-mode nil) ; unsets backends for sh-mode
@@ -544,12 +544,12 @@ FACE defaults to inheriting from default and highlight."
 
 (remove-hook 'enh-ruby-mode-hook #'+ruby|init-robe)
 
-(use-package company
-    :bind (
-         :map company-active-map
-         (("C-n"   . company-select-next)
-          ("C-p"   . company-select-previous)
-          ("C-d"   . company-show-doc-buffer)
-          ("<tab>" . company-complete))
-         )
-)
+;; (use-package company
+;;     :bind (
+;;          :map company-active-map
+;;          (("C-n"   . company-select-next)
+;;           ("C-p"   . company-select-previous)
+;;           ("C-d"   . company-show-doc-buffer)
+;;           ("<tab>" . company-complete))
+;;          )
+;; )

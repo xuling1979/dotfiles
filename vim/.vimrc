@@ -11,6 +11,7 @@ Plugin 'vim-scripts/AutoComplPop'
 Plugin 'vim-scripts/OmniCppComplete'
 Plugin 'vim-syntastic/syntastic'
 Plugin 'altercation/vim-colors-solarized'
+Plugin 'junegunn/fzf.vim'
 call vundle#end()
 filetype plugin indent on
 

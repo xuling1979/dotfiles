@@ -1,0 +1,42 @@
+theme = "solarized-dark"
+icons = "awesome"
+
+[[block]]
+block = "focused_window"
+max_width = 50
+show_marks = "visible"
+
+[[block]]
+block = "pomodoro"
+length = 25
+break_length = 5
+message = "Take a break!"
+break_message = "Back to work!"
+use_nag = true
+nag_path = "i3-nagbar"
+
+[[block]]
+block = "memory"
+display_type = "memory"
+format_mem = "{Mup}%"
+format_swap = "{SUp}%"
+
+[[block]]
+block = "cpu"
+interval = 1
+
+[[block]]
+block = "backlight"
+device = "intel_backlight"
+
+[[block]]
+block = "sound"
+
+[[block]]
+block = "battery"
+interval = 10
+
+[[block]]
+block = "time"
+interval = 60
+format = "%a %d/%m %R"

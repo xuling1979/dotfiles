@@ -21,15 +21,15 @@ bindsym $mod+Shift+x exec i3lock-fancy
 bindsym $mod+m exec chromium
 bindsym $mod+z exec --no-tartup-id zeal
 bindsym $mod+8 exec code
-bindsym $mod+9 exec emacs
-bindsym $mod+o exec obsidian 
-bindsym $mod+Return exec alacritty 
+bindsym $mod+Ctrl+x exec GTK_IM_MODULE=fcitx GTK_IM_MODULE=fcitx XMODIFIERS=@im=fcitx LANG=zh_CN.UTF-8 LC_CTYPE=zh_CN.UTF-8 emacs
+bindsym $mod+o exec Logseq 
+bindsym $mod+Return exec i3-sensible-terminal  
 
 # Window kill command
 bindsym $mod+Shift+q kill
 
 # start program launcher
-bindsym $mod+d exec --no-startup-id rofi -show run
+bindsym $mod+d exec --no-startup-id rofi -show run 
 bindsym $mod+c exec --no-startup-id rofi -show window 
 
 # change focus
@@ -208,13 +208,15 @@ mode "$mode_display" {
     bindsym y exec --no-startup-id xrandr --output DP2 --auto --off, mode "default"
     bindsym h exec --no-startup-id xrandr --output HDMI2 --mode 1920x1200 --pos 2560x0 --scale 1.5x1.5 --rotate normal, mode "default" 
     bindsym j exec --no-startup-id xrandr --output HDMI2 --auto --off, mode "default"
-    bindsym a exec --no-startup-id xrandr --output eDP1 --off --output DP1 --off --output DP2 --primary --mode 3840x2160 --pos 0x0 --rotate normal --output HDMI1 --off --output HDMI2 --off --output VIRTUAL1 --off 
-    bindsym r exec --no-startup-id xrandr --output eDP1 --primary --mode 2560x1440 --pos 0x0 --rotate normal --output DP1 --off --output DP2 --off --output HDMI1 --off --output HDMI2 --off --output VIRTUAL1 --off
+    bindsym a exec --no-startup-id xrandr --output eDP1 --off --output DP1 --off --output DP2 --primary --mode 3840x2160 --pos 0x0 --rotate normal --output HDMI1 --off --output HDMI2 --off --output VIRTUAL1 --off, mode "default"
+
+    bindsym r exec --no-startup-id xrandr --output eDP1 --primary --mode 2560x1440 --pos 0x0 --rotate normal --output DP1 --off --output DP2 --off --output HDMI1 --off --output HDMI2 --off --output VIRTUAL1 --off, mode "default"
 
     # back to normal: Enter or Escape
     bindsym Return mode "default"
     bindsym Escape mode "defaultr
 }
+
 # Declare here the shortcut to bring the display selection menu
 bindsym $mod+x mode "$mode_display"
 
@@ -245,7 +247,7 @@ mode "resize" {
 # Autostart applications
 exec --no-startup-id xfce4-power-manager
 exec --no-startup-id clipit 
-exec --no-startup-id feh --bg-scale /home/bitcat/Pictures/wallpaper-qiyi.jpg
+# exec --no-startup-id feh --randomize --bg-fill /home/bitcat/Pictures/wallpaper-qiyi.jpg
 exec --no-startup-id redshift
 exec --no-startup-id safeeyes
 exec --no-startup-id blueman-manager 
@@ -255,10 +257,13 @@ exec --no-startup-id picom  -b
 exec_always --no-startup-id utools
 exec_always --no-startup-id setxkbmap -option 'ctrl:nocaps'
 exec_always --no-startup-id fix_xcursor
+exec --no-startup-id xsetroot -solid "#333333"
+
 
 exec --no-startup-id systemctl enable postgresql.service
 exec --no-startup-id systemctl start postgresql.service
 exec --no-startup-id dunst
+exec --no-startup-id nitrogen --restore
 
 # Theme colors
 client.focused #b0b287 #1d1e26 #b0b287 #789073 #789073
@@ -267,7 +272,7 @@ client.unfocused #b0b287 #1d1e26 #b0b287 #789073 #789073
 client.urgent #b0b287 #1d1e26 #b0b287 #789073 #789073
 client.placeholder #b0b287 #1d1e26 #b0b287 #789073 #789073
 
-client.background #1d1e26
+client.background #2b2c2b
 
 # Gaps
 gaps inner 2 
@@ -342,7 +347,7 @@ mode "$mode_redshift" {
 
 # alttab setup
 
-exec --no-startup-id alttab -fg "#d58681" -bg "#4a4a4a" -frame "#eb564d" -t 128x150 -i 127x64
+# exec --no-startup-id alttab -fg "#d58681" -bg "#4a4a4a" -frame "#eb564d" -t 128x150 -i 127x64
 
 
 # Start i3bar to display a workspace bar (plus the system information i3status if available)
@@ -370,4 +375,7 @@ bindsym $mod+$mod1+m bar mode toggle
 bindsym $mod+p move workspace to output right
 bindsym $mod+Shift+p move workspace to output left
 
+# assign
+assign [class="chromium"] 3
+assign [class="code"] 2
 

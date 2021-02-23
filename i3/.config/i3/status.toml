@@ -26,6 +26,11 @@ block = "cpu"
 interval = 1
 
 [[block]]
+block = "docker"
+interval = 2
+format = "{running}/{total}"
+
+[[block]]
 block = "backlight"
 device = "intel_backlight"
 

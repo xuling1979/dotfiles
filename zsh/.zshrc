@@ -1,3 +1,10 @@
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
@@ -8,7 +15,7 @@ export ZSH="/home/bitcat/.oh-my-zsh"
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
-ZSH_THEME="robbyrussell"
+ZSH_THEME="powerlevel10k/powerlevel10k"
 
 . ~/dotfiles/z.sh
 # Set list of themes to pick from when loading at random
@@ -69,7 +76,7 @@ ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=5'
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git z vi-mode rails colored-man-pages extract zsh-syntax-highlighting zsh-autosuggestions bundler colorize common-aliases command-not-found )
+plugins=(git z vi-mode rails colored-man-pages docker-compose gitfast rust zsh-completions zsh-history-substring-search zsh-syntax-highlighting zsh-autosuggestions bundler colorize common-aliases command-not-found docker)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -103,6 +110,14 @@ alias diff="diff-so-fancy"
 alias cat="bat"
 alias ls="exa"
 alias l="exa -lahF"
+alias la='ls -a'
+alias lla='ls -la'
+alias lt='ls --tree'
+alias ip='ip -c'
+alias rm='rm -i'
+alias x='ranger'
+alias c='cmus'
+alias h='htop'
 # flutter
 export PUB_HOSTED_URL=https://pub.flutter-io.cn  
 export FLUTTER_STORAGE_BASE_URL=https://storage.flutter-io.cn
@@ -169,3 +184,10 @@ eval "$(rbenv init -)"
 
 source /usr/share/fzf/key-bindings.zsh 
 source /usr/share/fzf/completion.zsh
+if [ -e /home/bitcat/.nix-profile/etc/profile.d/nix.sh ]; then . /home/bitcat/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+autoload -Uz compinit
+compinit

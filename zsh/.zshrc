@@ -1,10 +1,9 @@
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
-
+# if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+#   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+# fi
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
@@ -15,16 +14,10 @@ export ZSH="/home/bitcat/.oh-my-zsh"
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
-ZSH_THEME="powerlevel10k/powerlevel10k"
+# ZSH_THEME="powerlevel10k/powerlevel10k"
 
 . ~/dotfiles/z.sh
-# Set list of themes to pick from when loading at random
-# Setting this variable when ZSH_THEME=random will cause zsh to load
-# a theme from this variable instead of looking in ~/.oh-my-zsh/themes/
-# If set to an empty array, this variable will have no effect.
 # ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
-
-# Uncomment the following line to use case-sensitive completion.
 # CASE_SENSITIVE="true"
 
 # Uncomment the following line to use hyphen-insensitive completion.
@@ -118,25 +111,34 @@ alias rm='rm -i'
 alias x='ranger'
 alias c='cmus'
 alias h='htop'
-# flutter
-export PUB_HOSTED_URL=https://pub.flutter-io.cn  
-export FLUTTER_STORAGE_BASE_URL=https://storage.flutter-io.cn
-export ANDROID_SDK_ROOT=/opt/android-sdk
-export PATH=$PATH:$ANDROID_SDK_ROOT/tools:$ANDROID_SDK_ROOT/platform-tools
+alias open='code'
+alias tn='tmuxinator'
+alias dcd='docker compose down --remove-orphans'
+alias dcr="docker compose run --rm app"
+alias dce="docker compose exec app"
+alias dcu="rm -f tmp/pids/server.pid && docker-compose up"
+alias car="~/app/DevSidecar-1.7.3.AppImage &"
+alias own="sudo chown "$USER":"$USER" -R ."
+
+alias ze="zellij"
+alias dstudy="docker run -it --rm -p 4000:80 ccr.ccs.tencentyun.com/dockerpracticesig/docker_practice"
+
 export PATH=/home/bitcat/.cargo/bin:$PATH
 export PATH=~/.npm-global/bin:$PATH
 export TERM=xterm-256color
-export PATH="$PATH":"$HOME/.pub-cache/bin"
-
+export EDITOR='nvim'
+export GPG_TTY=$(tty)
+export LC_ALL="en_US.UTF-8"
 bindkey ',' autosuggest-accept
+
 
 # fzf setup
 #
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 fzf-history-widget-accept() {
-  fzf-history-widget
-  zle accept-line
+fzf-history-widget
+zle accept-line
 }
 
 zle     -N     fzf-history-widget-accept
@@ -149,45 +151,49 @@ export FZF_DEFAULT_COMMAND="fd --exclude={.git,.idea,.sass-cache,node_modules,bu
 
 export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --preview '(highlight -O ansi {} || cat {}) 2> /dev/null | head -500'"
 
+export CHROME_EXECUTABLE=/bin/chromium
 
 function start_tmux() {
-    if type tmux &> /dev/null; then
-        #if not inside a tmux session, and if no session is started, start a new session
-        if [[ $HOST == "laptop" && -z "$TMUX" && -z $TERMINAL_CONTEXT ]]; then
-            (tmux -2 attach || tmux -2 new-session)
-        fi
+  if type tmux &> /dev/null; then
+    #if not inside a tmux session, and if no session is started, start a new session
+    if [[ $HOST == "laptop" && -z "$TMUX" && -z $TERMINAL_CONTEXT ]]; then
+      (tmux -2 attach || tmux -2 new-session)
     fi
+  fi
 }
 start_tmux
 
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 
 export PATH="/home/bitcat/.emacs.d/bin:$PATH"
+export PATH="/home/bitcat/.rbenv/shims:$PATH"
 export PATH="$PATH:/usr/lib/dart/bin"
-
-# ssh git
-if [ -f ~/.ssh/agent.env ] ; then
-    . ~/.ssh/agent.env > /dev/null
-    if ! kill -0 $SSH_AGENT_PID > /dev/null 2>&1; then
-        echo "Stale agent file found. Spawning a new agent. "
-        eval `ssh-agent | tee ~/.ssh/agent.env`
-        ssh-add
-    fi
-else
-    echo "Starting ssh-agent"
-    eval `ssh-agent | tee ~/.ssh/agent.env`
-    ssh-add
-fi
-
 export PATH="$HOME/.rbenv/bin:$PATH"
 eval "$(rbenv init -)"
 
-source /usr/share/fzf/key-bindings.zsh 
+source /usr/share/fzf/key-bindings.zsh
 source /usr/share/fzf/completion.zsh
-if [ -e /home/bitcat/.nix-profile/etc/profile.d/nix.sh ]; then . /home/bitcat/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+# [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+sandbox() {
+  docker run -it -v $(pwd):/app -w /app $1 bash
+}
 
 autoload -Uz compinit
 compinit
+
+if [ -n "$NVIM_LISTEN_ADDRESS" ]; then
+  alias nvim=nvr -cc split --remote-wait +'set bufhidden=wipe'
+fi
+
+if [ -n "$NVIM_LISTEN_ADDRESS" ]; then
+  export VISUAL="nvr -cc split --remote-wait +'set bufhidden=wipe'"
+  export EDITOR="nvr -cc split --remote-wait +'set bufhidden=wipe'"
+else
+  export VISUAL="nvim"
+  export EDITOR="nvim"
+fi
+
+eval "$(starship init zsh)"

@@ -1,10 +1,14 @@
-theme = "solarized-dark"
+theme = "modern"
 icons = "awesome"
 
 [[block]]
 block = "focused_window"
-max_width = 50
+max_width = 60
 show_marks = "visible"
+
+[[block]]
+block = "music"
+buttons = ["play", "next"]
 
 [[block]]
 block = "pomodoro"
@@ -16,14 +20,12 @@ use_nag = true
 nag_path = "i3-nagbar"
 
 [[block]]
-block = "memory"
-display_type = "memory"
-format_mem = "{Mup}%"
-format_swap = "{SUp}%"
-
-[[block]]
 block = "cpu"
 interval = 1
+
+[[block]]
+block = "disk_space"
+info_type = "available"
 
 [[block]]
 block = "docker"
@@ -45,3 +47,6 @@ interval = 10
 block = "time"
 interval = 60
 format = "%a %d/%m %R"
+
+[[block]]
+block = "notify"

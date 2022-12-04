@@ -1,0 +1,32 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_OUTPUT_EXCMD	mixed	/number, pattern, mixed, or combineV2/
+!_TAG_OUTPUT_FILESEP	slash	/slash or backslash/
+!_TAG_OUTPUT_MODE	u-ctags	/u-ctags or e-ctags/
+!_TAG_PATTERN_LENGTH_LIMIT	96	/0 for no limit/
+!_TAG_PROC_CWD	/home/bitcat/dotfiles/	//
+!_TAG_PROGRAM_AUTHOR	Universal Ctags Team	//
+!_TAG_PROGRAM_NAME	Universal Ctags	/Derived from Exuberant Ctags/
+!_TAG_PROGRAM_URL	https://ctags.io/	/official site/
+!_TAG_PROGRAM_VERSION	5.9.0	/p5.9.20210905.0/
++data-hideshow-forward-sexp	emacs/.doom.d/config.el	/^(defun +data-hideshow-forward-sexp (arg)$/;"	f
+<F2>	vim/.vimrc	/^map <F2> :NERDTreeToggle<CR>$/;"	m
+<F3>	vim/.vimrc	/^map <F3> :TagbarToggle<CR>$/;"	m
+<F4>	vim/.vimrc	/^map <F4> :CtrlPMixed<CR>$/;"	m
+_z	z.sh	/^_z() {$/;"	f
+_z_dirs	z.sh	/^    _z_dirs () {$/;"	f
+_z_precmd	z.sh	/^            _z_precmd() {$/;"	f
+_z_zsh_tab_completion	z.sh	/^    _z_zsh_tab_completion() {$/;"	f
+bg	tmux/.tmux.conf	/^set -g message-style "bg=#00346e, fg=#ffffd7"        # tomorrow night blue, base3$/;"	k
+bg	tmux/.tmux.conf	/^set -g status-style "bg=#00346e, fg=#ffffd7"   # tomorrow night blue, base3$/;"	k
+bg	tmux/.tmux.conf	/^set -wg window-status-current-style "bg=red" # red$/;"	k
+common	z.sh	/^            function common(matches) {$/;"	f
+display-line-overlay+	emacs/.doom.d/config.el	/^(defun display-line-overlay+ (pos str &optional face)$/;"	f
+fg	tmux/.tmux.conf	/^set -wg pane-active-border-style "fg=blue"$/;"	k
+fg	tmux/.tmux.conf	/^set -wg pane-border-style "fg=#585858"       # base01$/;"	k
+fg	tmux/.tmux.conf	/^set -wg window-status-last-style "fg=red"$/;"	k
+frecent	z.sh	/^            function frecent(rank, time) {$/;"	f
+ora--company-good-prefix-p	emacs/.doom.d/config.el	/^(defun ora--company-good-prefix-p (orig-fn prefix)$/;"	f
+ora-company-number	emacs/.doom.d/config.el	/^(defun ora-company-number ()$/;"	f
+output	z.sh	/^            function output(matches, best_match, common) {$/;"	f
+tmux_conf_copy_to_os_clipboard	tmux/.tmux.conf	/^tmux_conf_copy_to_os_clipboard=true$/;"	k

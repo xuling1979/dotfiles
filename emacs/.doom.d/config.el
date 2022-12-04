@@ -7,10 +7,10 @@
 ;; These are used for a number of things, particularly for GPG configuration,
 ;; some email clients, file templates and snippets.
 (setq user-full-name "flycat"
-      user-mail-address "quakexx@foxmail.com")
+      user-mail-address "flyxcat@outlook.com")
 
- (setq package-archives '(("gnu"   . "http://elpa.emacs-china.org/gnu/")
-                           ("melpa" . "http://elpa.emacs-china.org/melpa/")))
+ (setq package-archives '(("gnu"   . "http://elpa.zilongshanren.com/gnu/")
+                           ("melpa" . "http://elpa.zilongshanren.com/melpa/")))
 
 ;; Doom exposes five (optional) variables for controlling fonts in Doom. Here
 ;; are the three important ones:
@@ -33,7 +33,7 @@
 
 ;; If you intend to use org, it is recommended you change this!
 (setq org-directory "~/Nutstore Files/Nutstore/org")
-(setq deft-directory "~/Nutstore Files/Nutstore/org")
+(setq deft-directory "~/logseq/pages")
 (setq deft-use-filename-as-title t)
 
 

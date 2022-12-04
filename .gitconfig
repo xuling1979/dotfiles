@@ -1,0 +1,8 @@
+[user]
+	name = xuling1979
+	email = flyxcat@outlook.com
+[http]
+	sslVerify = false
+	proxy = http://127.0.0.1:31181
+[https]
+	proxy = http://127.0.0.1:31181
